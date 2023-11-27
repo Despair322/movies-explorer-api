@@ -6,7 +6,10 @@ const getUser = (req, res, next) => {
   const id = req.user._id;
   UserModel.findById(id)
     .orFail(() => next(new NotFoundError('Пользователь не найден')))
-    .then((user) => res.send(user))
+    .then((user) => {
+      const { _id, ...userWithoutID } = user;
+      return res.send(userWithoutID);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Невалидный ID'));

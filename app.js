@@ -18,7 +18,7 @@ mongoose.connect(DB_URL, {}).then(() => {
 const app = express();
 
 app.use(limiter);
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'movie-explorer.dymov.nomoredomainsmonster.ru' }));
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());

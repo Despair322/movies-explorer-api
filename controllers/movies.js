@@ -4,9 +4,9 @@ const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
 
 const getMovies = (req, res, next) => {
-  const id = req.user._id;
-  MovieModel.find({ owner: id })
-    .orFail(() => next(new NotFoundError('Пользователь не найден')))
+  const owner = req.user._id;
+  MovieModel.find({ owner })
+    .orFail(() => next(new NotFoundError('Фильмов не найдено')))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -31,16 +31,16 @@ const createMovie = (req, res, next) => {
 
 const deleteMovieById = (req, res, next) => {
   const owner = req.user._id;
-  const { movieId } = req.params;
-  MovieModel.findById(movieId)
-    .orFail(() => next(new NotFoundError('Карточка не найдена')))
+  const { id } = req.params;
+  MovieModel.findById(id)
+    .orFail(() => next(new NotFoundError('Фильм не найден')))
     .then((movie) => {
       if (movie.owner.toString() !== owner.toString()) {
-        return next(new ForbiddenError('Попытка удаления чужой карточки'));
+        return next(new ForbiddenError('Попытка удаления чужого фильма'));
       }
       MovieModel.deleteOne(movie)
-        // .orFail(() => next(new NotFoundError('Карточка не найдена')))
-        .then((deletedCard) => res.send(deletedCard));
+        .then((deletedCard) => res.send(deletedCard))
+        .catch(() => next(new Error()));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
