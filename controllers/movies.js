@@ -12,7 +12,7 @@ const getMovies = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Невалидный ID'));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 
@@ -25,7 +25,7 @@ const createMovie = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(err.message));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 
@@ -40,13 +40,13 @@ const deleteMovieById = (req, res, next) => {
       }
       MovieModel.deleteOne(movie)
         .then((deletedCard) => res.send(deletedCard))
-        .catch(() => next(new Error()));
+        .catch((err) => next(err));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Невалидный ID'));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 

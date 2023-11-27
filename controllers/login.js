@@ -30,7 +30,7 @@ const login = (req, res, next) => {
         }).send({ message: 'Успешно авторизован' });
       });
     })
-    .catch(() => next(new Error()));
+    .catch((err) => next(err));
 };
 
 const createUser = (req, res, next) => {
@@ -52,7 +52,7 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(err.message));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 

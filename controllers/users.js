@@ -14,7 +14,7 @@ const getUser = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Невалидный ID'));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 
@@ -31,7 +31,7 @@ const updateUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(err.message));
       }
-      return next(new Error());
+      return next(err);
     });
 };
 
