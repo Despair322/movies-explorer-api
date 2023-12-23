@@ -1,6 +1,7 @@
 const UserModel = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
+const ConflictError = require('../errors/conflict-error');
 
 const getUser = (req, res, next) => {
   const id = req.user._id;
@@ -25,6 +26,9 @@ const updateUser = (req, res, next) => {
     .orFail(() => next(new NotFoundError('Пользователь не найден')))
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError('Email уже занят'));
+      }
       if (err.name === 'CastError') {
         return next(new BadRequestError('Невалидный ID'));
       }
